@@ -3,4 +3,8 @@ body{
 }
 .backgoundimg{
     position: fixed;
+    background-repeat: repeat;
+}
+.backgoundimgtext{
+    position: fixed;
 }
