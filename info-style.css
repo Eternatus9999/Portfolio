@@ -7,7 +7,7 @@ body {
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
     background-image:
-    url(img/bg.png),
+    url(img/Black\ Texture\ Background.jpeg),
     repeating-linear-gradient(
         to right, transparent 0 500px, #73814B33 500px 501px
     );
@@ -65,7 +65,7 @@ header .content-fit nav ul{
 }
 
 #banner .title {
-    color: #000000;
+    color: #ffffff;
     font-size: 11em;
     font-family: "devil breeze";
     font-weight: bold;
@@ -78,7 +78,7 @@ header .content-fit nav ul{
     top: 0.5em;
     inset: 0.66em 0 0 0;
     z-index: -1;
-    color: #000000;
+    color: #ffffff;
 }
 .section .decorate {
     position: absolute;
@@ -93,6 +93,7 @@ header .content-fit nav ul{
     font-family: "devil breeze";
     font-size: 15em;
     font-weight: bold;
+    color: #ffffff;
 }
 .section .content-fit .title {
     font-family: "devil breeze";
@@ -104,10 +105,12 @@ header .content-fit nav ul{
 }
 #description .number {
     font-size: 5em;
+    color: #ffffff;
 }
 #description .title {
     font-size: 7em;
     font-weight: 500;
+    color: #ffffff;
 }
 #contact .content-fit {
     display: flex;
@@ -124,15 +127,17 @@ header .content-fit nav ul{
 }
 #contact table td {
     padding-block: 0.5em;
-    border-bottom: 1px dashed #445022;
+    border-bottom: 1px dashed #ffffff;
 }
 #contact table td:nth-child(1) {
     text-align: left;
     font-weight: 500;
+    color: #ffffff;
 }
 #contact table td:nth-child(2) {
     text-align: right;
     font-weight: 200;
+    color: #ffffff;
 }
 #contact .sign {
     font-family: 'Bimbo', sans-serif;
@@ -145,10 +150,43 @@ header .content-fit nav ul{
     z-index: 100;
     pointer-events: none;
 }
+.title{
+    color: #ffffff;
+   
+}
+.welcome{
+    transform: translateY(-150px);
+}
+.des{
+    color: #ffffff; 
+}
 p{
     font-size: 30px;
     text-align: left;
 }
+.card-body{
+    background-color: #5c5b5b;
+}
+.card-body p{
+    color: aliceblue;
+}
+.card-body h4{
+    color: rgb(255, 217, 0);
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 @media screen and (max-width: 1023px){
     #banner .title {
         font-size: 5em;

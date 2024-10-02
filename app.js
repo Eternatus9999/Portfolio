@@ -61,18 +61,127 @@ if (document.getElementById('Card') != null) {
         requestAnimationFrame(animate);
         renderer.render(scene, camera);
         TWEEN.update();
-        if(object){
-            gsap.to(object.rotation,{
+        if (object) {
+            gsap.to(object.rotation, {
                 y: 1.38,
                 duration: 5
             })
         }
     }
     animate();
+    document.getElementById('showmore').onclick = () => {
+        window.location.href = "info.html";
+
+    }
 }
-if (document.getElementById('Robot') != null){}
-let showmore = document.getElementById('showmore');
-showmore.onclick = ()=>{
-    window.location.href = "info.html";
-    
+if (document.getElementById('container3D') != null) {
+    const camera = new THREE.PerspectiveCamera(
+        1,// vieweing Angle 👁️<
+        window.innerWidth / window.innerHeight, // aspect
+        0.1, //near
+        1000 //distance
+    );
+    camera.position.z = 13; //to see everything inthe scene
+
+    const scene = new THREE.Scene();
+    let object;
+    let mixer;
+    const loader = new GLTFLoader(); // reader glb files
+    loader.load('models/mech_drone.glb', //3D Model Path
+        function (gltf) {   //This will run when the model loder prosses is done 
+            object = gltf.scene;
+            scene.add(object);
+            object.position.y = -0.3;
+            object.position.z = -20;
+            object.rotation.y = 3.2;
+
+            mixer = new THREE.AnimationMixer(object);
+            mixer.clipAction(gltf.animations[0]).play();
+        },
+        function (xhr) { },//This will run until the code ends
+        function (error) { } //This will run when there is an error while importing your 3D model
+    );
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true /*to make the bacjkground transparent */ }); //to to create a renderer to render the 3D model
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('container3D').appendChild(renderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.3); //light
+    scene.add(ambientLight);
+
+    const topLight = new THREE.DirectionalLight(0xffffff, 15);
+    topLight.position.set(500, 5000, 400);
+    scene.add(topLight);
+
+    const reRender3D = () => {
+        requestAnimationFrame(reRender3D);
+        renderer.render(scene, camera); //to render everything
+        if (mixer) mixer.update(0.005); //animations
+    };
+    reRender3D();
+
+    let arrPositionModel = [
+        {
+            id: 'banner',
+            position: { x: 0, y: -0.3, z: -20 },
+            rotation: { x: 0, y: 3.2, z: 0 }
+        },
+        {
+            id: 'intro',
+            position: { x: -0.5, y: -0.3, z: -20 },
+            rotation: { x: 0, y: -1, z: 0 }
+        },
+        {
+            id: 'description',
+            position: { x: 0.3, y: -0.3, z: -20 },
+            rotation: { x: 0, y: 2.5, z: 0 }
+        },
+        {
+            id: 'contact',
+            position: { x: 0.7, y: -0.5, z: -50 },
+            rotation: { x: 0.5, y: 1, z: 0 }
+        }
+    ]
+
+
+    const modelMove = () => {
+        const section = document.querySelectorAll('.section');
+        let currentSection;
+        section.forEach((section) => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= window.innerHeight / 1.5) {
+                currentSection = section.id;
+            }
+        });
+        let position_active = arrPositionModel.findIndex(
+            (val) => val.id == currentSection
+        );
+        if (position_active >= 0) {
+            let new_coordinates = arrPositionModel[position_active];
+            gsap.to(object.position, {
+                x: new_coordinates.position.x,
+                y: new_coordinates.position.y,
+                z: new_coordinates.position.z,
+                duration: 2,
+                ease: "power1.out"
+            });
+            gsap.to(object.rotation, {
+                x: new_coordinates.rotation.x,
+                y: new_coordinates.rotation.y,
+                z: new_coordinates.rotation.z,
+                duration: 2,
+                ease: "power1.out"
+            });
+        }
+    }
+    window.addEventListener("scroll", () => {
+        if (object) {
+            modelMove();
+        }
+    })
+
+    document.getElementById('goback').onclick = () => {
+        window.location.href = "index.html";
+    }
 }
+
