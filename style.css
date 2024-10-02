@@ -10,12 +10,12 @@ body{
 .backgoundimgtext{
     position: fixed;
     z-index: -10;
-    transform: translateY(-20px);
+    /* transform: translateY(-20px); */
 }
 #Card{
     height: 100vh;
     cursor: grab;
 }
-.showmore{
+#showmore{
     transform: translateY(-250px);
 }

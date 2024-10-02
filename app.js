@@ -46,10 +46,10 @@ if (document.getElementById('Card') != null) {
     camera.position.set(5, 0, 1); //x,y,z
 
     //add light
-    let ambientLight = new THREE.AmbientLight(0xffffff, 2);
+    let ambientLight = new THREE.AmbientLight(0x404040, 5);
     scene.add(ambientLight);
 
-    let directionLight = new THREE.DirectionalLight(0xffffff, 2);
+    let directionLight = new THREE.DirectionalLight(0x404040, 5);
     scene.add(directionLight);
 
     //add controls to the camera
@@ -69,4 +69,10 @@ if (document.getElementById('Card') != null) {
         }
     }
     animate();
+}
+if (document.getElementById('Robot') != null){}
+let showmore = document.getElementById('showmore');
+showmore.onclick = ()=>{
+    window.location.href = "info.html";
+    
 }
