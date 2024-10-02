@@ -91,9 +91,7 @@ if (document.getElementById('container3D') != null) {
         function (gltf) {   //This will run when the model loder prosses is done 
             object = gltf.scene;
             scene.add(object);
-            object.position.y = -0.3;
-            object.position.z = -20;
-            object.rotation.y = 3.2;
+            modelMove();
 
             mixer = new THREE.AnimationMixer(object);
             mixer.clipAction(gltf.animations[0]).play();
