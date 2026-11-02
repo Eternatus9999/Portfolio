@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root { --a: #7c5cff; --b: #22d3ee; --c: #ff5caa; }
+html, body, #root { height: 100%; margin: 0; }
+body { background: #07070d; color: #eef0ff; font-family: 'Bricolage Grotesque', system-ui, sans-serif; overflow: hidden; }
+
+/* Liquid glass */
+.glass {
+  background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.03) 55%, rgba(124,92,255,.10));
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 28px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.4), inset 0 -1px 0 rgba(255,255,255,.06),
+              inset 0 0 28px rgba(255,255,255,.04), 0 24px 70px rgba(0,0,0,.55);
+}
+.glass-btn { border-radius: 999px; padding: .45rem 1rem; transition: transform .2s, background .2s; }
+.glass-btn:hover { background: rgba(255,255,255,.16); transform: translateY(-1px); }
+.glass-btn:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--b); outline-offset: 2px; }
+.grad-text { background: linear-gradient(90deg, var(--b), var(--a), var(--c)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.label3d { position: absolute; left: 0; top: 0; pointer-events: none; font-weight: 600; font-size: 13px; padding: .3rem .8rem; white-space: nowrap; will-change: transform; }
+.panel-in { animation: panel .35s cubic-bezier(.2,.8,.2,1); }
+@keyframes panel { from { opacity: 0; transform: translateY(14px) scale(.97); } }
+@media (prefers-reduced-motion: reduce) { .panel-in { animation: none; } }
