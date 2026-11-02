@@ -12,7 +12,7 @@ export const sections = [
   {
     id: 'about', title: 'About me', shape: 'icosa', pos: [-18, -10], colors: ['#7c5cff', '#22d3ee'],
     body: 'Hi, I’m Chathusha Pehemina.An aspiring Full Stack Developer and Game Developer. I love building things that feel alive. I’m currently learning more about 3D development and game development.',
-    image: '/images/profile.jpg',
+    image: '/images/Profile.png',
   },
   {
     id: 'skills', title: 'Skills', shape: 'octa', pos: [18, -10], colors: ['#22d3ee', '#34d399'],
