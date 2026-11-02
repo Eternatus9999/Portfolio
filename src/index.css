@@ -22,3 +22,21 @@ body { background: #07070d; color: #eef0ff; font-family: 'Bricolage Grotesque', 
 .panel-in { animation: panel .35s cubic-bezier(.2,.8,.2,1); }
 @keyframes panel { from { opacity: 0; transform: translateY(14px) scale(.97); } }
 @media (prefers-reduced-motion: reduce) { .panel-in { animation: none; } }
+
+
+@media (max-width: 767px) {
+  :root { --a: #6d28d9; --b: #0e7490; --c: #be185d; }
+  body { background: #e9e6ff; color: #0b0b1e; }
+  .glass {
+    background: linear-gradient(135deg, rgba(255,255,255,.75), rgba(255,255,255,.4));
+    border-color: rgba(255,255,255,.9);
+    color: #0b0b1e;
+    box-shadow: inset 0 1px 0 #fff, 0 12px 36px rgba(70,50,160,.25);
+  }
+  [class*="text-white"], .glass-btn { color: #0b0b1e !important; }
+  [class*="bg-white"]     { background: rgba(11,11,30,.07) !important; }
+  [class*="border-white"] { border-color: rgba(11,11,30,.15) !important; }
+  .glass-btn:hover { background: rgba(11,11,30,.08); }
+  .bg-black\/40 { background: rgba(255,255,255,.4); }
+  aside h2 { color: #0b0b1e !important; }
+}
