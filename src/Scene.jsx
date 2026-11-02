@@ -24,7 +24,7 @@ export default function Scene({ onNear, onShard, onToast, apiRef }) {
     const vel = new THREE.Vector3(), tmp = new THREE.Vector3(), want = new THREE.Vector3()
 
     const ren = new THREE.WebGLRenderer({ antialias: true })
-    ren.setPixelRatio(Math.min(devicePixelRatio, 2)); ren.setSize(el.clientWidth, el.clientHeight)
+    ren.setPixelRatio(Math.min(devicePixelRatio, 2)); ren.setSize(el.clientWidth || innerWidth, el.clientHeight || innerHeight)
     el.appendChild(ren.domElement)
     const sc = new THREE.Scene()
     sc.background = new THREE.Color('#07070d'); sc.fog = new THREE.FogExp2('#07070d', 0.016)
@@ -34,7 +34,7 @@ export default function Scene({ onNear, onShard, onToast, apiRef }) {
       const m = new THREE.Mesh(new THREE.BoxGeometry(6, 6, 0.5), new THREE.MeshBasicMaterial({ color: c })); m.position.set(...p); m.lookAt(0, 0, 0); env.add(m)
     })
     sc.environment = new THREE.PMREMGenerator(ren).fromScene(env, 0.04).texture
-    const cam = new THREE.PerspectiveCamera(60, el.clientWidth / el.clientHeight, 0.1, 300); cam.position.set(0, 10, 16)
+    const cam = new THREE.PerspectiveCamera(60, (el.clientWidth || innerWidth) / (el.clientHeight || innerHeight), 0.1, 300); cam.position.set(0, 10, 16)
     sc.add(new THREE.AmbientLight('#8877ff', 0.4))
     const sp = new Float32Array(1800).map(() => (Math.random() - 0.5) * 220)
     const stars = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(sp, 3)), new THREE.PointsMaterial({ color: '#b8b0ff', size: 0.25, transparent: true, opacity: 0.8 }))
@@ -216,7 +216,7 @@ export default function Scene({ onNear, onShard, onToast, apiRef }) {
       cam.position.lerp(want, 1 - Math.pow(0.002, dt)); cam.lookAt(pl.position.x, pl.position.y * 0.8, pl.position.z - 2)
 
       // portals
-      let n = null; const w = el.clientWidth, h = el.clientHeight
+      let n = null; const w = el.clientWidth || innerWidth, h = el.clientHeight || innerHeight
       P.forEach((q, k) => {
         if (!reduce) { q.m.rotation.y += dt * 0.4; q.m.rotation.x += dt * 0.15 }
         q.i.rotation.y -= dt; q.g.position.y = Math.sin(t + k) * 0.3 + 1.6
@@ -266,11 +266,17 @@ export default function Scene({ onNear, onShard, onToast, apiRef }) {
       stars.rotation.y = t * 0.01; updParticles(dt); ren.render(sc, cam)
     }
     raf = requestAnimationFrame(loop)
-    const onResize = () => { ren.setSize(el.clientWidth, el.clientHeight); cam.aspect = el.clientWidth / el.clientHeight; cam.updateProjectionMatrix() }
-    addEventListener('resize', onResize)
+    const onResize = () => {
+      const w = el.clientWidth || innerWidth, h = el.clientHeight || innerHeight
+      ren.setSize(w, h); cam.aspect = w / h; cam.updateProjectionMatrix()
+    }
+    // re-measure whenever the container changes size (phone address bar, rotation, late layout)
+    const ro = new ResizeObserver(onResize); ro.observe(el)
+    addEventListener('resize', onResize); addEventListener('orientationchange', onResize)
+    requestAnimationFrame(onResize); setTimeout(onResize, 300)
 
     return () => {
-      cancelAnimationFrame(raf)
+      cancelAnimationFrame(raf); ro.disconnect(); removeEventListener('orientationchange', onResize)
       removeEventListener('keydown', kd); removeEventListener('keyup', ku); removeEventListener('resize', onResize)
       removeEventListener('pointermove', pm); removeEventListener('pointerup', pu)
       P.forEach((q) => q.l.remove()); ren.dispose(); ren.domElement.remove()
