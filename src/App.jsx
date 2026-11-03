@@ -68,7 +68,7 @@ export default function App() {
                 <h2 className="text-2xl font-bold" style={{ color: active.colors[1] }}>{active.title}</h2>
                 <button className="glass-btn text-sm" onClick={() => setClosed(active.id)} aria-label="Close panel">Close</button>
               </div>
-              {active.image && <Img src={active.image} className="mb-3 h-40 w-full rounded-2xl object-cover" />}
+              {active.image && <Img src={active.image} className="mb-3 h-100 w-full rounded-2xl object-cover" />}
               <p className="text-white/80">{active.body}</p>
               {active.chips && (
                 <ul className="mt-4 flex flex-wrap gap-2">
