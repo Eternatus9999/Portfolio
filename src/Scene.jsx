@@ -18,13 +18,16 @@ export default function Scene({ onNear, onShard, onToast, apiRef }) {
 
   useEffect(() => {
     const el = mount.current
+    // lite mode: phones and low-core devices get cheaper materials, a lighter terrain and fewer stars
+    const lite = matchMedia('(max-width: 767px)').matches || (navigator.hardwareConcurrency || 8) <= 4
+    let easy = false
     let inv = 0, sq = 0, jy = 0, jv = 0, jn = 0, air = false, crouch = false, cr = 0, tc = false
     let got = 0, combo = 0, lastGot = 0, mute = false, actx = null, cur = 0, near = null, closedRaf
     const keys = {}; let drag = null
     const vel = new THREE.Vector3(), tmp = new THREE.Vector3(), want = new THREE.Vector3()
 
     const ren = new THREE.WebGLRenderer({ antialias: true })
-    ren.setPixelRatio(Math.min(devicePixelRatio, 2)); ren.setSize(el.clientWidth || innerWidth, el.clientHeight || innerHeight)
+    ren.setPixelRatio(Math.min(devicePixelRatio, lite ? 1.25 : 2)); ren.setSize(el.clientWidth || innerWidth, el.clientHeight || innerHeight)
     el.appendChild(ren.domElement)
     const sc = new THREE.Scene()
     sc.background = new THREE.Color('#07070d'); sc.fog = new THREE.FogExp2('#07070d', 0.016)
@@ -36,7 +39,7 @@ export default function Scene({ onNear, onShard, onToast, apiRef }) {
     sc.environment = new THREE.PMREMGenerator(ren).fromScene(env, 0.04).texture
     const cam = new THREE.PerspectiveCamera(60, (el.clientWidth || innerWidth) / (el.clientHeight || innerHeight), 0.1, 300); cam.position.set(0, 10, 16)
     sc.add(new THREE.AmbientLight('#8877ff', 0.4))
-    const sp = new Float32Array(1800).map(() => (Math.random() - 0.5) * 220)
+    const sp = new Float32Array(lite ? 900 : 1800).map(() => (Math.random() - 0.5) * 220)
     const stars = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(sp, 3)), new THREE.PointsMaterial({ color: '#b8b0ff', size: 0.25, transparent: true, opacity: 0.8 }))
     sc.add(stars)
 
@@ -71,7 +74,7 @@ export default function Scene({ onNear, onShard, onToast, apiRef }) {
     // ---------- hero: robot built from primitives ----------
     const buildHero = () => {
       const g = new THREE.Group(); g.rotation.order = 'YXZ'
-      const white = new THREE.MeshPhysicalMaterial({ color: '#f2f0ff', roughness: 0.25, clearcoat: 1, iridescence: 0.6 })
+      const white = lite ? new THREE.MeshStandardMaterial({ color: '#f2f0ff', roughness: 0.3, metalness: 0.1 }) : new THREE.MeshPhysicalMaterial({ color: '#f2f0ff', roughness: 0.25, clearcoat: 1, iridescence: 0.6 })
       const dark = new THREE.MeshStandardMaterial({ color: '#0b0b1e', roughness: 0.1, metalness: 0.8, emissive: '#22d3ee', emissiveIntensity: 0.35 })
       const glow = (c) => new THREE.MeshBasicMaterial({ color: c })
       const add = (geo, mat, x, y, z, par = g) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); par.add(m); return m }
@@ -103,7 +106,7 @@ export default function Scene({ onNear, onShard, onToast, apiRef }) {
     const pl = new THREE.Group(); pl.add(hero.g, new THREE.PointLight('#22d3ee', 30, 14)); pl.position.set(0, 0, 3); sc.add(pl)
 
     // ---------- portals ----------
-    const glass = (c) => new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.05, transmission: 0.95, thickness: 1.5, ior: 1.4, iridescence: 1, clearcoat: 1, envMapIntensity: 1.4 })
+    const glass = (c) => lite ? new THREE.MeshStandardMaterial({ color: c, roughness: 0.12, metalness: 0.7, envMapIntensity: 1.4, emissive: c, emissiveIntensity: 0.15 }) : new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.05, transmission: 0.95, thickness: 1.5, ior: 1.4, iridescence: 1, clearcoat: 1, envMapIntensity: 1.4 })
     const P = sections.map((s) => {
       const g = new THREE.Group(); g.position.set(s.pos[0], 0, s.pos[1])
       const m = new THREE.Mesh(SHAPES[s.shape](), glass(s.colors[0])), i = new THREE.Mesh(new THREE.OctahedronGeometry(0.7), new THREE.MeshBasicMaterial({ color: s.colors[1] }))
@@ -119,7 +122,7 @@ export default function Scene({ onNear, onShard, onToast, apiRef }) {
       for (const q of P) f = Math.min(f, sm(R + 1, R + 7, Math.hypot(q.g.position.x - x, q.g.position.z - z)))
       return f * (Math.sin(x * 0.17) * Math.cos(z * 0.14) * 0.9 + Math.sin((x + z) * 0.08) * 0.8 + Math.cos(x * 0.05 - z * 0.07) * 0.6)
     }
-    const TG = new THREE.PlaneGeometry((B + 8) * 2, (B + 8) * 2, 90, 90).rotateX(-Math.PI / 2), tp = TG.attributes.position, tcol = new Float32Array(tp.count * 3)
+    const TG = new THREE.PlaneGeometry((B + 8) * 2, (B + 8) * 2, lite ? 56 : 90, lite ? 56 : 90).rotateX(-Math.PI / 2), tp = TG.attributes.position, tcol = new Float32Array(tp.count * 3)
     for (let i = 0; i < tp.count; i++) { const h = gh(tp.getX(i), tp.getZ(i)); tp.setY(i, h - 1.25); const k = cl((h + 1) / 3.2, 0, 1); tcol[i * 3] = 0.04 + k * 0.38; tcol[i * 3 + 1] = 0.035 + k * 0.06; tcol[i * 3 + 2] = 0.1 + k * 0.42 }
     TG.setAttribute('color', new THREE.BufferAttribute(tcol, 3)); TG.computeVertexNormals()
     sc.add(new THREE.Mesh(TG, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.85, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 })),
@@ -160,15 +163,15 @@ export default function Scene({ onNear, onShard, onToast, apiRef }) {
     const jump = () => { if (jn < 2) { jv = jn ? 12 : 14.5; jn++; burst(pl.position, '#9aa0ff', 12); beep(jn > 1 ? 700 : 520, 0.12); sq = 0.6 } }
     const dash = () => { const L = vel.length() || 1; vel.x += vel.x / L * 28; vel.z += vel.z / L * 28; burst(pl.position, '#ffffff', 24); beep(180, 0.2); sq = 1; inv = Math.max(inv, 0.35) }
     const hurt = (dx, dz, msg, color) => {
-      inv = 1.6; sq = 1; const L = Math.hypot(dx, dz) || 1; vel.set(dx / L * 15, 0, dz / L * 15)
+      inv = easy ? 0.8 : 1.6; sq = 1; const L = Math.hypot(dx, dz) || 1; vel.set(dx / L * 15, 0, dz / L * 15)
       burst(pl.position, color, 28); beep(110, 0.35)
-      const lose = Math.min(got, 2); got -= lose; combo = 0
+      const lose = easy ? 0 : Math.min(got, 2); got -= lose; if (!easy) combo = 0
       for (let i = 0; i < lose; i++) mkShard(pl.position.x + (Math.random() - 0.5) * 8, pl.position.z + (Math.random() - 0.5) * 8)
-      report(); toast(msg + (lose ? ` Dropped ${lose}.` : ''))
+      report(); toast(msg + (lose ? ` Dropped ${lose}.` : easy ? ' No shards lost.' : ''))
     }
     apiRef.current = {
       warp: (id) => { const p = P.find((q) => q.s.id === id); if (!p) return; pl.position.set(p.g.position.x, 0, p.g.position.z + 9); vel.set(0, 0, 0); jy = jv = 0 },
-      jump, crouch: (on) => { tc = on },
+      jump, dash, crouch: (on) => { tc = on }, setEasy: (v) => { easy = v },
     }
 
     // ---------- input ----------
