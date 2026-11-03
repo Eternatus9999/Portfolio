@@ -33,7 +33,7 @@ export default function Plain({ onPlay }) {
           <section key={s.id} id={s.id} className="glass mb-6 scroll-mt-24 p-6 md:p-8">
             <h2 className="text-3xl font-bold" style={{ color: s.colors[1] }}>{s.title}</h2>
             <div className={s.image ? 'mt-4 gap-6 md:flex' : 'mt-4'}>
-              {s.image && <Img src={s.image} className="mb-4 h-56 w-full rounded-2xl object-cover md:mb-0 md:w-64 md:shrink-0" />}
+              {s.image && <Img src={s.image} className="mb-4 h-70 w-full rounded-2xl object-cover md:mb-0 md:w-64 md:shrink-0" />}
               <div className="flex-1">
                 <p className="text-lg text-white/80">{s.body}</p>
                 {s.chips && (
